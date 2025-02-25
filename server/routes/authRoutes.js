@@ -35,12 +35,10 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: "User does not exist. SignUp Please",
-        });
+      return res.status(401).json({
+        success: false,
+        message: "User does not exist. SignUp Please",
+      });
     }
 
     if (user.password !== password) {
@@ -69,6 +67,7 @@ router.post("/login", async (req, res) => {
       success: true,
       message: "Login successful",
       role: user.role,
+      id: user._id,
       token: token,
     });
   } catch (error) {

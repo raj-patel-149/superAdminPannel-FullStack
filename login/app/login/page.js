@@ -17,6 +17,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const res = await login({ email: username, password }).unwrap();
+
       if (res.success) {
         // Check the user's role and redirect accordingly
         if (res.role === "superadmin") {
@@ -27,7 +28,7 @@ export default function Login() {
         } else if (res.role === "admin") {
           setSnackbarOpen(true);
           setTimeout(() => {
-            router.push("/admin");
+            router.push(`/admin/${res.id}`);
           }, 700);
         } else {
           setSnackbarOpen(true);

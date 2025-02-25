@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useRouter, usePathname } from "next/navigation";
 
-const Sidebar = ({ role }) => {
+const Sidebar = ({ role, id }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [logout] = useLogoutMutation();
@@ -18,8 +18,8 @@ const Sidebar = ({ role }) => {
   const menuItems =
     role === "admin"
       ? [
-          { text: "Dashboard", path: "/admin/dashboard" },
-          { text: "Manage Users", path: "/admin/manageuser" },
+          { text: "Dashboard", path: `/admin/${id}/dashboard` },
+          { text: "Manage Trainer", path: `/admin/${id}` },
         ]
       : role === "superadmin"
       ? [
