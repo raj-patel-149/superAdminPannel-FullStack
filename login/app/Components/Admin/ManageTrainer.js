@@ -22,7 +22,7 @@ import {
 import DisplayTrainer from "./DisplayTrainer";
 import { useParams } from "next/navigation";
 
-const ManageTrainer = () => {
+const ManageTrainer = ({ role }) => {
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -87,7 +87,7 @@ const ManageTrainer = () => {
         </div>
 
         <div className="flex justify-center items-center overflow-auto">
-          <DisplayTrainer adminId={id} />
+          <DisplayTrainer adminId={id} role={role} />
         </div>
 
         <Button
