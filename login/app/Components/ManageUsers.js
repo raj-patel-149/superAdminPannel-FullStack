@@ -25,7 +25,7 @@ import {
 import DisplayUsers from "./DisplayUsers";
 import { useParams } from "next/navigation";
 
-const ManageUsers = () => {
+const ManageUsers = ({ role }) => {
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -89,7 +89,7 @@ const ManageUsers = () => {
         </div>
 
         <div className="flex justify-center items-center overflow-auto">
-          <DisplayUsers trainerId={id} />
+          <DisplayUsers trainerId={id} role={role} />
         </div>
 
         <Button

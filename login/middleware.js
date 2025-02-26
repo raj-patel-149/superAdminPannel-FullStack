@@ -9,8 +9,16 @@ export function middleware(req) {
   const adminPath = "/admin";
   const userPath = "/user";
   const mainPath = "/";
+  const superPath = "/super-admin";
+  const trainerPath = "/trainer";
 
-  const protectedRoutes = ["/home", "/admin", "/user"];
+  const protectedRoutes = [
+    "/home",
+    "/admin",
+    "/user",
+    "/super-admin",
+    "/trainer",
+  ];
 
   // If user is trying to access `/home` but is not authenticated, redirect to `/login`
   if (!token && req.nextUrl.pathname.startsWith(homePath)) {
@@ -20,6 +28,12 @@ export function middleware(req) {
     return NextResponse.redirect(new URL(mainPath, req.url));
   }
   if (!token && req.nextUrl.pathname.startsWith(userPath)) {
+    return NextResponse.redirect(new URL(mainPath, req.url));
+  }
+  if (!token && req.nextUrl.pathname.startsWith(superPath)) {
+    return NextResponse.redirect(new URL(mainPath, req.url));
+  }
+  if (!token && req.nextUrl.pathname.startsWith(trainerPath)) {
     return NextResponse.redirect(new URL(mainPath, req.url));
   }
 
@@ -33,5 +47,5 @@ export function middleware(req) {
 
 // Define which routes middleware should run on
 export const config = {
-  matcher: ["/home", "/login", "/admin", "/user"], // Apply middleware to `/home` and `/login`
+  matcher: ["/home", "/login", "/admin", "/user", "/super-admin", "/trainer"], // Apply middleware to `/home` and `/login`
 };

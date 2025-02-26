@@ -27,8 +27,9 @@ import {
 } from "@/features/apiSlice";
 import { useForm, Controller } from "react-hook-form";
 import SearchIcon from "@mui/icons-material/Search";
+import { useParams, useRouter } from "next/navigation";
 
-const DisplayUsers = ({ trainerId }) => {
+const DisplayUsers = ({ trainerId, role }) => {
   // State Hooks
   const [userStatus, setUserStatus] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
@@ -37,6 +38,18 @@ const DisplayUsers = ({ trainerId }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const router = useRouter();
+  const params = useParams();
+  const adminId = params.adminId;
+  const handleAdminClick = (userId) => {
+    if (role === "super") {
+      router.push(`/super-admin/${adminId}/${trainerId}/${userId}`);
+    } else if (role === "admin") {
+      router.push(`/admin/${adminId}/${trainerId}/${userId}`);
+    } else if (role === "trainer") {
+      router.push(`/trainer/${trainerId}/${userId}`);
+    }
+  };
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -286,6 +299,7 @@ const DisplayUsers = ({ trainerId }) => {
               rowCount={totalUsers}
               paginationMode="server"
               paginationModel={paginationModel}
+              onRowDoubleClick={(params) => handleAdminClick(params.row._id)}
               onPaginationModelChange={(newModel) =>
                 setPaginationModel(newModel)
               }
