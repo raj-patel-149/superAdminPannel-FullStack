@@ -38,7 +38,7 @@ export default function Login() {
         } else {
           setSnackbarOpen(true);
           setTimeout(() => {
-            router.push("/user");
+            router.push(`/user/${res.id}`);
           }, 700); // Redirect to the user home page
         }
       }

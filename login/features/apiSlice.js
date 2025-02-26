@@ -49,6 +49,10 @@ export const apiSlice = createApi({
       },
       providesTags: ["User"],
     }),
+    getUserById: builder.query({
+      query: (id) => `user/${id}`,
+      providesTags: ["User"],
+    }),
 
     deleteUser: builder.mutation({
       query: (userId) => ({
@@ -153,6 +157,7 @@ export const {
   useLogoutMutation,
   useAddUserMutation,
   useGetuserQuery,
+  useGetUserByIdQuery,
   useDeleteUserMutation,
   useUpdateUserMutation,
   useAddAdminMutation,

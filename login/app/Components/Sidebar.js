@@ -32,8 +32,8 @@ const Sidebar = ({ role, id }) => {
           { text: "Manage Admins", path: "/super-admin/manageAdmin" },
         ]
       : [
-          { text: "Dashboard", path: "/user/dashboard" },
-          { text: "Your Profile", path: "/user/dashboard" },
+          { text: "Dashboard", path: `/user/${id}/dashboard` },
+          { text: "Your Profile", path: `/user/${id}` },
         ];
 
   const handleLogout = async () => {

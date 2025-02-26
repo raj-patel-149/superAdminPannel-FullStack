@@ -87,7 +87,23 @@ router.get("/users", async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+// **Fetch Admin by ID**
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
 
+    if (!user || user.role !== "user") {
+      return res
+        .status(404)
+        .json({ success: false, message: "user not found" });
+    }
+
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
 // Delete User
 router.delete("/:id", async (req, res) => {
   try {
@@ -107,7 +123,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // **Update User Route (Admin Only)**
-router.put("/:id", verifyAdmin, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email, password, status } = req.body;
