@@ -21,6 +21,11 @@ const Sidebar = ({ role, id }) => {
           { text: "Dashboard", path: `/admin/${id}/dashboard` },
           { text: "Manage Trainer", path: `/admin/${id}` },
         ]
+      : role === "trainer"
+      ? [
+          { text: "Dashboard", path: `/trainer/${id}/dashboard` },
+          { text: "Manage User", path: `/trainer/${id}` },
+        ]
       : role === "superadmin"
       ? [
           { text: "Dashboard", path: "/super-admin/dashboard" },
@@ -39,6 +44,8 @@ const Sidebar = ({ role, id }) => {
         <Typography variant="h6">
           {role === "admin"
             ? "Admin Panel"
+            : role === "trainer"
+            ? "Trainer Panel"
             : role === "superadmin"
             ? "Super Admin Pannel"
             : "User Panel"}

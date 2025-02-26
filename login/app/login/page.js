@@ -30,6 +30,11 @@ export default function Login() {
           setTimeout(() => {
             router.push(`/admin/${res.id}`);
           }, 700);
+        } else if (res.role === "trainer") {
+          setSnackbarOpen(true);
+          setTimeout(() => {
+            router.push(`/trainer/${res.id}`);
+          }, 700);
         } else {
           setSnackbarOpen(true);
           setTimeout(() => {
