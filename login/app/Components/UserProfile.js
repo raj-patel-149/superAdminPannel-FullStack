@@ -54,7 +54,7 @@ const ProfilePage = () => {
             textAlign="center"
             gutterBottom
           >
-            {user?.name.toUpperCase()}'s Profile
+            {user?.name.toUpperCase()}'s Data
           </Typography>
           <Box sx={{ bgcolor: "#f5f5f5", p: 2, borderRadius: 2 }}>
             <Typography

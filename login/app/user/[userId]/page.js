@@ -165,16 +165,10 @@ const ProfilePage = () => {
               margin="normal"
               {...register("name")}
             />
-            <TextField
-              label="Email"
-              type="email"
-              fullWidth
-              margin="normal"
-              {...register("email")}
-            />
+
             <TextField
               label="Password"
-              type="password"
+              type="text"
               fullWidth
               margin="normal"
               {...register("password")}

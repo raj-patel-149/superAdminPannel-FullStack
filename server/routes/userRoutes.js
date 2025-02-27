@@ -1,8 +1,17 @@
 const express = require("express");
 const User = require("../models/User");
-const { verifyAdmin } = require("../middleware/authMiddleware");
+const nodemailer = require("nodemailer");
 
 const router = express.Router();
+
+// Configure Nodemailer with Gmail SMTP
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "rdpatel11124@gmail.com",
+    pass: "ldzy rwur lxab zwcr",
+  },
+});
 
 // **Add User Route (Admin Only)**
 router.post("/add-user", async (req, res) => {
@@ -30,6 +39,45 @@ router.post("/add-user", async (req, res) => {
       parent_Id: parent_Id,
     });
     await newUser.save();
+
+    // Define Email Content
+    const mailOptions = {
+      from: "rdpatel11124@gmail.com",
+      to: email,
+      subject: "Welcome to Our Platform",
+      html: `<p>Hello <b>${name}</b>,</p>
+           <p>Your account has been successfully created.</p>
+           <p><b>Email:</b> ${email}</p>
+           <p><b>Password:</b> ${password}</p>
+           <p>You can now log in using the credentials above.</p>
+           <p>
+          <a href="http://localhost:3000/login" 
+             style="display: inline-block; padding: 10px 20px; font-size: 16px; 
+             color: #fff; background-color: #007BFF; text-decoration: none; 
+             border-radius: 5px;">
+             Login Now
+          </a>
+        </p>
+           <p>Best Regards,</p>
+           <p>Team</p>`,
+    };
+
+    // Send Email
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error("Email sending failed:", err);
+        return res.status(500).json({
+          success: false,
+          message: "Email sending failed",
+          error: err,
+        });
+      }
+      console.log("Email sent successfully:", info.response);
+      return res.json({
+        success: true,
+        message: "User added successfully and email sent",
+      });
+    });
 
     res.json({ success: true, message: "User added successfully" });
   } catch (error) {
