@@ -84,6 +84,14 @@ export default function Login() {
           >
             {isLoading ? "Logging in..." : "Login"}
           </Button>
+          <div className="w-full flex justify-end items-center pr-2  mt-1 ">
+            <p
+              className="text-blue-600 block hover:underline cursor-pointer"
+              onClick={() => router.push("/forgot-password")}
+            >
+              Forgot Password
+            </p>
+          </div>
           <Button
             variant="contained"
             onClick={handleSignUp}

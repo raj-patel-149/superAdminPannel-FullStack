@@ -92,6 +92,66 @@ router.post("/add-user", async (req, res) => {
   }
 });
 
+// **Handle Forgot Password**
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Find user by ID and update status
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (user.password === "NotSet") {
+      user.password = "password123";
+    }
+
+    await user.save();
+
+    // Define Email Content
+    const mailOptions = {
+      from: "rdpatel11124@gmail.com",
+      to: email,
+      subject: "Welcome to Our Platform",
+      html: `<p>Hello <b>${user.name}</b>,</p>
+           <p>Login using this password.</p>
+           <p><b>User Name:</b> ${user.name}</p>
+           <p><b>Email:</b> ${email}</p>
+           <p><b>Your Password:</b> ${user.password}</p>
+           <p>
+             <p>Click below to login:</p>
+             <a href="http://localhost:3000/login" 
+                style="padding: 10px 20px; background: #2e99e6; color: white; text-decoration: none;">Login Now</a>
+        </p>
+           <p>Best Regards,</p>
+           <p>Team</p>
+            `,
+    };
+
+    // Send Email
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error("Email sending failed:", err);
+        return res.status(500).json({
+          success: false,
+          message: "Email sending failed",
+          error: err,
+        });
+      }
+      console.log("Email sent successfully:", info.response);
+      return res.json({
+        success: true,
+        message: "User added successfully and email sent",
+      });
+    });
+
+    res.json({ message: "Email sent successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // **Handle Email Acceptance**
 router.put("/accept-email/:email", async (req, res) => {
   try {

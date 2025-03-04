@@ -57,6 +57,14 @@ export const apiSlice = createApi({
       query: (email) => `user/${email}`,
       providesTags: ["User"],
     }),
+    forgotPassword: builder.mutation({
+      query: ({ email }) => ({
+        url: "user/forgot-password",
+        method: "POST",
+        body: { email },
+      }),
+      invalidatesTags: ["User"],
+    }),
 
     deleteUser: builder.mutation({
       query: (userId) => ({
@@ -176,6 +184,7 @@ export const {
   useLogoutMutation,
   useAddUserMutation,
   useGetuserQuery,
+  useForgotPasswordMutation,
   useGetUserByIdQuery,
   useGetUserByEmailQuery,
   useDeleteUserMutation,

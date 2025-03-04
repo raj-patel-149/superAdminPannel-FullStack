@@ -77,6 +77,12 @@ const ResetPasswordPage = () => {
         <h1 className="text-[30px] bg-blue-400 p-10 rounded-3xl font-[700]">
           <p>You already set the password</p>
         </h1>
+      ) : user?.user_Status === "Email accepted" ? (
+        <h1 className="text-[30px] bg-blue-400 p-10 rounded-3xl font-[700]">
+          <p onClick={() => router.push("/forgot-password")}>
+            You accept invitation
+          </p>
+        </h1>
       ) : expireLink ? (
         <h1 className="text-[30px] bg-red-400 p-10 rounded-3xl font-[700]">
           Link was expired. Please request a new reset link.{" "}
