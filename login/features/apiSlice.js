@@ -69,6 +69,21 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+    acceptEmail: builder.mutation({
+      query: (email) => ({
+        url: `user/accept-email/${email}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["User"],
+    }),
+    resetPassword: builder.mutation({
+      query: ({ email, password }) => ({
+        url: "user/reset-password",
+        method: "POST",
+        body: { email, password },
+      }),
+      invalidatesTags: ["User"],
+    }),
 
     // admin
     addAdmin: builder.mutation({
@@ -160,6 +175,8 @@ export const {
   useGetUserByIdQuery,
   useDeleteUserMutation,
   useUpdateUserMutation,
+  useAcceptEmailMutation,
+  useResetPasswordMutation,
   useAddAdminMutation,
   useDeleteAdminMutation,
   useGetAdminQuery,

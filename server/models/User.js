@@ -10,9 +10,20 @@ const userSchema = new mongoose.Schema(
       enum: ["superadmin", "admin", "trainer", "user"],
       default: "user",
     },
-    status: { type: String, enum: ["active", "inactive"], default: "active" },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
     signup: { type: String, enum: ["superadmin", "admin", "trainer", "user"] },
     parent_Id: { type: mongoose.Schema.Types.ObjectId, ref: "emps" },
+    user_Status: {
+      type: String,
+      enum: ["Email sent", "Email accepted", "Password not set", "verified"],
+      required: function () {
+        return this.role === "user"; // Only required when role is 'user'
+      },
+    },
   },
   { timestamps: true }
 );

@@ -43,7 +43,6 @@ const ManageUsers = ({ role }) => {
       await addUser({
         name: formData.username,
         email: formData.email,
-        password: formData.password,
         parent_Id: id,
       }).unwrap();
 
@@ -149,30 +148,6 @@ const ManageUsers = ({ role }) => {
                   <TextField
                     {...field}
                     label="Email"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-              <Controller
-                name="password"
-                control={control}
-                defaultValue=""
-                rules={{
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                }}
-                render={({ field, fieldState }) => (
-                  <TextField
-                    {...field}
-                    label="Password"
-                    type="password"
                     variant="outlined"
                     fullWidth
                     margin="normal"

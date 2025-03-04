@@ -1,8 +1,10 @@
 const express = require("express");
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 const router = express.Router();
+const SECRET_KEY = process.env.JWT_SECRET || "supersecretkey";
 
 // Configure Nodemailer with Gmail SMTP
 const transporter = nodemailer.createTransport({
@@ -15,7 +17,7 @@ const transporter = nodemailer.createTransport({
 
 // **Add User Route (Admin Only)**
 router.post("/add-user", async (req, res) => {
-  const { name, email, password, parent_Id } = req.body;
+  const { name, email, parent_Id } = req.body;
 
   try {
     const existingUser = await User.findOne({ $or: [{ name }, { email }] });
@@ -30,16 +32,22 @@ router.post("/add-user", async (req, res) => {
       });
     }
 
+    const resetToken = jwt.sign({ email: email }, SECRET_KEY, {
+      expiresIn: "10m",
+    });
+
     const newUser = new User({
       name,
       email,
-      password,
+      password: "NotSet",
       role: "user",
       signup: "trainer",
       parent_Id: parent_Id,
+      user_Status: "Email sent",
     });
     await newUser.save();
 
+    const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
     // Define Email Content
     const mailOptions = {
       from: "rdpatel11124@gmail.com",
@@ -47,19 +55,18 @@ router.post("/add-user", async (req, res) => {
       subject: "Welcome to Our Platform",
       html: `<p>Hello <b>${name}</b>,</p>
            <p>Your account has been successfully created.</p>
+           <p><b>User Name:</b> ${name}</p>
            <p><b>Email:</b> ${email}</p>
-           <p><b>Password:</b> ${password}</p>
-           <p>You can now log in using the credentials above.</p>
+           
+           <b>You can now reset your password to verify.</b>
            <p>
-          <a href="http://localhost:3000/login" 
-             style="display: inline-block; padding: 10px 20px; font-size: 16px; 
-             color: #fff; background-color: #007BFF; text-decoration: none; 
-             border-radius: 5px;">
-             Login Now
-          </a>
+             <p>Click below to reset your password:</p>
+             <a href="${resetUrl}" 
+                style="padding: 10px 20px; background: #28A745; color: white; text-decoration: none;">Reset Password</a>
         </p>
            <p>Best Regards,</p>
-           <p>Team</p>`,
+           <p>Team</p>
+            <img src="http://localhost:3001/api/user/accept-email/${email}" width="1" height="1" style="display: none;" />`,
     };
 
     // Send Email
@@ -82,6 +89,60 @@ router.post("/add-user", async (req, res) => {
     res.json({ success: true, message: "User added successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// **Handle Email Acceptance**
+router.put("/accept-email/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    // Find user by ID and update status
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const token = jwt.sign({ email }, SECRET_KEY, {
+      expiresIn: "2m",
+    });
+    user.user_Status = "Email accepted";
+    await user.save();
+
+    setTimeout(async () => {
+      const expiredUser = await User.findOne({ email });
+      if (expiredUser && expiredUser.user_Status === "Email accepted") {
+        expiredUser.user_Status = "Password not set";
+        await expiredUser.save();
+        console.log("Password not set");
+      }
+    }, 1 * 60 * 1000);
+
+    res.json({ message: "Email accepted successfully", user: user });
+  } catch (error) {
+    console.error("Error updating user status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// **Handle Password Reset**
+router.post("/reset-password", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Update user password
+    user.password = password;
+    user.user_Status = "verified";
+    await user.save();
+
+    return res.json({ message: "Password reset successful!" });
+  } catch (error) {
+    return res.status(400).json({ message: "Invalid or expired token" });
   }
 });
 

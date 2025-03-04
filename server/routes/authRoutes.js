@@ -52,6 +52,12 @@ router.post("/login", async (req, res) => {
         message: "This user is inactive. Please contact the admin.",
       });
     }
+    if (user.role === "user" && user.user_Status !== "verified") {
+      return res.status(401).json({
+        success: false,
+        message: "See your mail box and complete the reset password process",
+      });
+    }
 
     const token = jwt.sign({ userId: user._id, role: user.role }, SECRET_KEY, {
       expiresIn: "1h",
