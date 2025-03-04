@@ -277,7 +277,7 @@ const DisplayUsers = ({ trainerId, role }) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        password: user.password,
+        password: user.password || "---",
         signup: user.signup || "User",
         // status: user.status || "inactive",
         user_status: user.user_Status || "Email sent",

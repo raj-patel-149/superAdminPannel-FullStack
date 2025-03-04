@@ -71,20 +71,32 @@ const ResetPasswordPage = () => {
     }
   };
 
+  if (user?.user_Status === "verified") {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+        <h1 className="text-[30px] bg-[#b1f0cb] p-10 rounded-3xl font-[700]">
+          <p>You already set the password</p>
+          <div className="mt-4 flex justify-center space-x-4">
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ width: "200px", backgroundColor: "#5a80f2" }}
+              onClick={() => router.push("/login")}
+            >
+              Login Now
+            </Button>
+          </div>
+        </h1>
+      </div>
+    );
+  }
+  if (expireLink) {
+  }
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      {user?.user_Status === "verified" ? (
-        <h1 className="text-[30px] bg-blue-400 p-10 rounded-3xl font-[700]">
-          <p>You already set the password</p>
-        </h1>
-      ) : user?.user_Status === "Email accepted" ? (
-        <h1 className="text-[30px] bg-blue-400 p-10 rounded-3xl font-[700]">
-          <p onClick={() => router.push("/forgot-password")}>
-            You accept invitation
-          </p>
-        </h1>
-      ) : expireLink ? (
-        <h1 className="text-[30px] bg-red-400 p-10 rounded-3xl font-[700]">
+      {expireLink ? (
+        <h1 className="text-[30px] bg-[#fa9ba5] p-10 rounded-3xl font-[700]">
           Link was expired. Please request a new reset link.{" "}
         </h1>
       ) : (

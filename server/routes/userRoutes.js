@@ -39,7 +39,6 @@ router.post("/add-user", async (req, res) => {
     const newUser = new User({
       name,
       email,
-      password: "NotSet",
       role: "user",
       signup: "trainer",
       parent_Id: parent_Id,
@@ -99,15 +98,27 @@ router.post("/forgot-password", async (req, res) => {
 
     // Find user by ID and update status
     const user = await User.findOne({ email });
+    if (user.role === "user") {
+      const generateRandomPassword = () => {
+        const chars =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let password = "";
+        for (let i = 0; i < 8; i++) {
+          password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return password;
+      };
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    if (user.password === "NotSet") {
-      user.password = "password123";
-    }
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      if (!user.password) {
+        user.password = generateRandomPassword();
+        user.user_Status = "verified";
+      }
 
-    await user.save();
+      await user.save();
+    }
 
     // Define Email Content
     const mailOptions = {
@@ -148,7 +159,7 @@ router.post("/forgot-password", async (req, res) => {
 
     res.json({ message: "Email sent successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "User does not exist" });
   }
 });
 
