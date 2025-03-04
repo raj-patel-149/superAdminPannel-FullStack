@@ -106,12 +106,18 @@ router.put("/accept-email/:email", async (req, res) => {
     const token = jwt.sign({ email }, SECRET_KEY, {
       expiresIn: "2m",
     });
-    user.user_Status = "Email accepted";
+    if (user.user_Status !== "verified") {
+      user.user_Status = "Email accepted";
+    }
     await user.save();
 
     setTimeout(async () => {
       const expiredUser = await User.findOne({ email });
-      if (expiredUser && expiredUser.user_Status === "Email accepted") {
+      if (
+        expiredUser &&
+        expiredUser.user_Status === "Email accepted" &&
+        expiredUser.user_Status !== "verified"
+      ) {
         expiredUser.user_Status = "Password not set";
         await expiredUser.save();
         console.log("Password not set");
@@ -196,11 +202,28 @@ router.get("/users", async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
-// **Fetch Admin by ID**
+// **Fetch user by ID**
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
+
+    if (!user || user.role !== "user") {
+      return res
+        .status(404)
+        .json({ success: false, message: "user not found" });
+    }
+
+    res.json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+// **Fetch user by Email**
+router.get("/email/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await User.findOne({ email });
 
     if (!user || user.role !== "user") {
       return res

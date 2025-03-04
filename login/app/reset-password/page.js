@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import {
   useAcceptEmailMutation,
+  useGetUserByEmailQuery,
   useResetPasswordMutation,
 } from "@/features/apiSlice"; // Import the API function
 import { useRouter } from "next/navigation";
@@ -47,6 +48,9 @@ const ResetPasswordPage = () => {
     }
   }, [email, acceptEmail]);
 
+  const { data } = useGetUserByEmailQuery(`email/${email}`);
+  const user = data?.user;
+
   const [resetPassword, { isLoading, isError, isSuccess }] =
     useResetPasswordMutation();
 
@@ -69,7 +73,11 @@ const ResetPasswordPage = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      {expireLink ? (
+      {user?.user_Status === "verified" ? (
+        <h1 className="text-[30px] bg-blue-400 p-10 rounded-3xl font-[700]">
+          <p>You already set the password</p>
+        </h1>
+      ) : expireLink ? (
         <h1 className="text-[30px] bg-red-400 p-10 rounded-3xl font-[700]">
           Link was expired. Please request a new reset link.{" "}
         </h1>

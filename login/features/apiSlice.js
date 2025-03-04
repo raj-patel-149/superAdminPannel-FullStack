@@ -53,6 +53,10 @@ export const apiSlice = createApi({
       query: (id) => `user/${id}`,
       providesTags: ["User"],
     }),
+    getUserByEmail: builder.query({
+      query: (email) => `user/${email}`,
+      providesTags: ["User"],
+    }),
 
     deleteUser: builder.mutation({
       query: (userId) => ({
@@ -173,6 +177,7 @@ export const {
   useAddUserMutation,
   useGetuserQuery,
   useGetUserByIdQuery,
+  useGetUserByEmailQuery,
   useDeleteUserMutation,
   useUpdateUserMutation,
   useAcceptEmailMutation,
