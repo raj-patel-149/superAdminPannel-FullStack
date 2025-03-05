@@ -112,6 +112,12 @@ router.post("/forgot-password", async (req, res) => {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
+      if (user.user_Status === "Email sent") {
+        return res.status(404).json({
+          message:
+            "Please accept email then you can use forgot password fuctionality",
+        });
+      }
       if (!user.password) {
         user.password = generateRandomPassword();
         user.user_Status = "verified";
