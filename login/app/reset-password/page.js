@@ -50,15 +50,19 @@ const ResetPasswordPage = () => {
       setError("No token found. Please check the reset link.");
     }
   }, [token]);
-  useEffect(() => {
-    if (token) {
-      acceptEmail(token);
-      setOpenSnackbar(true);
-    }
-  }, [token, acceptEmail]);
 
   const { data } = useGetUserByEmailQuery(`email/${email}`);
   const user = data?.user;
+
+  useEffect(() => {
+    if (token) {
+      acceptEmail(token);
+    }
+  }, [token, acceptEmail]);
+
+  if (user?.user_Status === "Email sent") {
+    setOpenSnackbar(true);
+  }
 
   const [resetPassword, { isLoading, isError, isSuccess }] =
     useResetPasswordMutation();
@@ -93,6 +97,31 @@ const ResetPasswordPage = () => {
               onClick={() => router.push("/login")}
             >
               Login Now
+            </Button>
+          </div>
+        </h1>
+      </div>
+    );
+  }
+  if (
+    user?.user_Status === "Email accepted" ||
+    (user?.user_Status === "Password not set" && expireLink)
+  ) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+        <h1 className="text-[30px] bg-[#b1f0cb] p-10 rounded-3xl font-[700] text-center">
+          <p>
+            Thank you for accept our invitation . You can click on forgot
+            password button to gate your password.
+          </p>
+          <div className="mt-4 flex justify-center space-x-4">
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ width: "200px", backgroundColor: "#5a80f2" }}
+              onClick={() => router.push("/forgot-password")}
+            >
+              Forgot Password
             </Button>
           </div>
         </h1>

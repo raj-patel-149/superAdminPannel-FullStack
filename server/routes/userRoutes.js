@@ -33,7 +33,7 @@ router.post("/add-user", async (req, res) => {
     }
 
     const resetToken = jwt.sign({ email: email }, SECRET_KEY, {
-      expiresIn: "10m",
+      expiresIn: "1m",
     });
 
     const newUser = new User({

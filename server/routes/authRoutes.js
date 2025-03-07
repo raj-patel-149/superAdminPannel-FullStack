@@ -41,9 +41,8 @@ router.post("/login", async (req, res) => {
         message: "User does not exist. SignUp Please",
       });
     }
-    // Password verification logic based on role
-    let isMatch = false;
-    isMatch = bcrypt.compare(password, user.password);
+    // Password verification
+    const isMatch = await bcrypt.compare(password, user.password); // ✅ Await bcrypt.compare
 
     if (!isMatch) {
       return res.status(401).json({
