@@ -32,7 +32,7 @@ import { useForm, Controller } from "react-hook-form";
 import SearchIcon from "@mui/icons-material/Search";
 import { useRouter } from "next/navigation";
 
-const DisplayTrainer = ({ adminId }) => {
+const DisplayTrainer = ({ adminId, role }) => {
   // State Hooks
   const [userStatus, setUserStatus] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
@@ -43,7 +43,11 @@ const DisplayTrainer = ({ adminId }) => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const router = useRouter();
   const handleAdminClick = (trainerId) => {
-    router.push(`/super-admin/${adminId}/${trainerId}`);
+    if (role === "super") {
+      router.push(`/super-admin/${adminId}/${trainerId}`);
+    } else {
+      router.push(`/admin/${adminId}/${trainerId}`);
+    }
   };
 
   const [paginationModel, setPaginationModel] = useState({

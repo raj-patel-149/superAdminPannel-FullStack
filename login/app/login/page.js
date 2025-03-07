@@ -17,6 +17,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const res = await login({ email: username, password }).unwrap();
+
       if (res.success) {
         // Check the user's role and redirect accordingly
         if (res.role === "superadmin") {
@@ -27,12 +28,17 @@ export default function Login() {
         } else if (res.role === "admin") {
           setSnackbarOpen(true);
           setTimeout(() => {
-            router.push("/admin");
+            router.push(`/admin/${res.id}`);
+          }, 700);
+        } else if (res.role === "trainer") {
+          setSnackbarOpen(true);
+          setTimeout(() => {
+            router.push(`/trainer/${res.id}`);
           }, 700);
         } else {
           setSnackbarOpen(true);
           setTimeout(() => {
-            router.push("/user");
+            router.push(`/user/${res.id}`);
           }, 700); // Redirect to the user home page
         }
       }
@@ -78,6 +84,14 @@ export default function Login() {
           >
             {isLoading ? "Logging in..." : "Login"}
           </Button>
+          <div className="w-full flex justify-end items-center pr-2  mt-1 ">
+            <p
+              className="text-blue-600 block hover:underline cursor-pointer"
+              onClick={() => router.push("/forgot-password")}
+            >
+              Forgot Password
+            </p>
+          </div>
           <Button
             variant="contained"
             onClick={handleSignUp}

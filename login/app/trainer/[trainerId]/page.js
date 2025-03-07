@@ -4,7 +4,7 @@ import React from "react";
 const page = () => {
   return (
     <div>
-      <ManageUsers role="super" />
+      <ManageUsers role="trainer" />
     </div>
   );
 };

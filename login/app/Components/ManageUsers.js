@@ -25,7 +25,7 @@ import {
 import DisplayUsers from "./DisplayUsers";
 import { useParams } from "next/navigation";
 
-const ManageUsers = () => {
+const ManageUsers = ({ role }) => {
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -43,7 +43,6 @@ const ManageUsers = () => {
       await addUser({
         name: formData.username,
         email: formData.email,
-        password: formData.password,
         parent_Id: id,
       }).unwrap();
 
@@ -89,7 +88,7 @@ const ManageUsers = () => {
         </div>
 
         <div className="flex justify-center items-center overflow-auto">
-          <DisplayUsers trainerId={id} />
+          <DisplayUsers trainerId={id} role={role} />
         </div>
 
         <Button
@@ -149,30 +148,6 @@ const ManageUsers = () => {
                   <TextField
                     {...field}
                     label="Email"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-              <Controller
-                name="password"
-                control={control}
-                defaultValue=""
-                rules={{
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                }}
-                render={({ field, fieldState }) => (
-                  <TextField
-                    {...field}
-                    label="Password"
-                    type="password"
                     variant="outlined"
                     fullWidth
                     margin="normal"

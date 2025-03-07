@@ -1,10 +1,10 @@
-import ManageUsers from "@/app/Components/ManageUsers";
+import UserProfile from "@/app/Components/UserProfile";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <ManageUsers role="super" />
+      <UserProfile />
     </div>
   );
 };

@@ -27,8 +27,9 @@ import {
 } from "@/features/apiSlice";
 import { useForm, Controller } from "react-hook-form";
 import SearchIcon from "@mui/icons-material/Search";
+import { useParams, useRouter } from "next/navigation";
 
-const DisplayUsers = ({ trainerId }) => {
+const DisplayUsers = ({ trainerId, role }) => {
   // State Hooks
   const [userStatus, setUserStatus] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
@@ -37,6 +38,18 @@ const DisplayUsers = ({ trainerId }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const router = useRouter();
+  const params = useParams();
+  const adminId = params.adminId;
+  const handleAdminClick = (userId) => {
+    if (role === "super") {
+      router.push(`/super-admin/${adminId}/${trainerId}/${userId}`);
+    } else if (role === "admin") {
+      router.push(`/admin/${adminId}/${trainerId}/${userId}`);
+    } else if (role === "trainer") {
+      router.push(`/trainer/${trainerId}/${userId}`);
+    }
+  };
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -143,34 +156,96 @@ const DisplayUsers = ({ trainerId }) => {
 
   // DataGrid Columns
   const columns = [
-    { field: "id", headerName: "#", width: 50 },
-    { field: "name", headerName: "Name", width: 140 },
-    { field: "email", headerName: "Email", width: 200 },
-    { field: "password", headerName: "Password", width: 160 },
     {
-      field: "status",
-      headerName: "Status",
+      field: "id",
+      headerName: "#",
+      width: 50,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "name",
+      headerName: "Name",
+      width: 130,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 220,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "password",
+      headerName: "Password",
+      width: 140,
+      headerAlign: "center",
+      align: "center",
+    },
+    // {
+    //   field: "status",
+    //   headerName: "Status",
+    //   width: 150,
+    //   headerAlign: "center",
+    //   align: "center",
+    //   renderCell: (params) => {
+    //     const userId = params.row._id;
+    //     return (
+    //       <div className="flex justify-start items-center">
+    //         <Switch
+    //           disabled
+    //           checked={userStatus[userId] || false}
+    //           onChange={() => handleStatusToggle(userId)}
+    //           color="success"
+    //         />
+    //         {userStatus[userId] ? "Active🟢" : "Inactive 🔴"}
+    //       </div>
+    //     );
+    //   },
+    // },
+    {
+      field: "signup",
+      headerName: "Signup Method",
       width: 150,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "user_status",
+      headerName: "User Status",
+      width: 120,
+      headerAlign: "center",
+      align: "center",
       renderCell: (params) => {
-        const userId = params.row._id;
         return (
-          <div className="flex justify-start items-center">
-            <Switch
-              disabled
-              checked={userStatus[userId] || false}
-              onChange={() => handleStatusToggle(userId)}
-              color="success"
-            />
-            {userStatus[userId] ? "Active🟢" : "Inactive 🔴"}
+          <div className="flex justify-center items-center mt-4">
+            <Typography
+              sx={{
+                color:
+                  params.value === "Email sent"
+                    ? "orange"
+                    : params.value === "Email accepted"
+                    ? "blue"
+                    : params.value === "Password not set"
+                    ? "red"
+                    : "green",
+                fontSize: "14px",
+              }}
+            >
+              {params.value}
+            </Typography>
           </div>
         );
       },
     },
-    { field: "signup", headerName: "Signup Method", width: 120 },
     {
       field: "actions",
       headerName: "Actions",
-      width: 200,
+      width: 220,
+      headerAlign: "center",
+      align: "center",
       renderCell: (params) => (
         <>
           <Button
@@ -202,9 +277,10 @@ const DisplayUsers = ({ trainerId }) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        password: user.password,
+        password: user.password || "---",
         signup: user.signup || "User",
-        status: user.status || "inactive",
+        // status: user.status || "inactive",
+        user_status: user.user_Status || "Email sent",
       }))
     : [];
 
@@ -286,6 +362,7 @@ const DisplayUsers = ({ trainerId }) => {
               rowCount={totalUsers}
               paginationMode="server"
               paginationModel={paginationModel}
+              onRowDoubleClick={(params) => handleAdminClick(params.row._id)}
               onPaginationModelChange={(newModel) =>
                 setPaginationModel(newModel)
               }

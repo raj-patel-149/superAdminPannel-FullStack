@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 const router = express.Router();
 const SECRET_KEY = process.env.JWT_SECRET || "supersecretkey";
@@ -35,23 +36,36 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: "User does not exist. SignUp Please",
-        });
+      return res.status(401).json({
+        success: false,
+        message: "User does not exist. SignUp Please",
+      });
+    }
+    // Password verification logic based on role
+    let isMatch = false;
+    isMatch = bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
     }
 
-    if (user.password !== password) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid password" });
-    }
     if (user.status !== "active") {
       return res.status(401).json({
         success: false,
         message: "This user is inactive. Please contact the admin.",
+      });
+    }
+    if (
+      user.role === "user" &&
+      user.user_Status !== "verified" &&
+      user.password === ""
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "See your mail box and complete the reset password process",
       });
     }
 
@@ -69,6 +83,7 @@ router.post("/login", async (req, res) => {
       success: true,
       message: "Login successful",
       role: user.role,
+      id: user._id,
       token: token,
     });
   } catch (error) {

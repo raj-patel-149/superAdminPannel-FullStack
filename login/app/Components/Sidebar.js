@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useRouter, usePathname } from "next/navigation";
 
-const Sidebar = ({ role }) => {
+const Sidebar = ({ role, id }) => {
   const router = useRouter();
   const pathname = usePathname();
   const [logout] = useLogoutMutation();
@@ -18,15 +18,23 @@ const Sidebar = ({ role }) => {
   const menuItems =
     role === "admin"
       ? [
-          { text: "Dashboard", path: "/admin/dashboard" },
-          { text: "Manage Users", path: "/admin/manageuser" },
+          { text: "Dashboard", path: `/admin/${id}/dashboard` },
+          { text: "Manage Trainer", path: `/admin/${id}` },
+        ]
+      : role === "trainer"
+      ? [
+          { text: "Dashboard", path: `/trainer/${id}/dashboard` },
+          { text: "Manage User", path: `/trainer/${id}` },
         ]
       : role === "superadmin"
       ? [
           { text: "Dashboard", path: "/super-admin/dashboard" },
           { text: "Manage Admins", path: "/super-admin/manageAdmin" },
         ]
-      : [{ text: "Dashboard", path: "/user/dashboard" }];
+      : [
+          { text: "Dashboard", path: `/user/${id}/dashboard` },
+          { text: "Your Profile", path: `/user/${id}` },
+        ];
 
   const handleLogout = async () => {
     await logout();
@@ -39,6 +47,8 @@ const Sidebar = ({ role }) => {
         <Typography variant="h6">
           {role === "admin"
             ? "Admin Panel"
+            : role === "trainer"
+            ? "Trainer Panel"
             : role === "superadmin"
             ? "Super Admin Pannel"
             : "User Panel"}

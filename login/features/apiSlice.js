@@ -49,6 +49,22 @@ export const apiSlice = createApi({
       },
       providesTags: ["User"],
     }),
+    getUserById: builder.query({
+      query: (id) => `user/${id}`,
+      providesTags: ["User"],
+    }),
+    getUserByEmail: builder.query({
+      query: (email) => `user/${email}`,
+      providesTags: ["User"],
+    }),
+    forgotPassword: builder.mutation({
+      query: ({ email }) => ({
+        url: "user/forgot-password",
+        method: "POST",
+        body: { email },
+      }),
+      invalidatesTags: ["User"],
+    }),
 
     deleteUser: builder.mutation({
       query: (userId) => ({
@@ -62,6 +78,21 @@ export const apiSlice = createApi({
         url: `user/${id}`,
         method: "PUT",
         body: updatedData,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    acceptEmail: builder.mutation({
+      query: (token) => ({
+        url: `user/accept-email/${token}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["User"],
+    }),
+    resetPassword: builder.mutation({
+      query: ({ email, password }) => ({
+        url: "user/reset-password",
+        method: "POST",
+        body: { email, password },
       }),
       invalidatesTags: ["User"],
     }),
@@ -153,8 +184,13 @@ export const {
   useLogoutMutation,
   useAddUserMutation,
   useGetuserQuery,
+  useForgotPasswordMutation,
+  useGetUserByIdQuery,
+  useGetUserByEmailQuery,
   useDeleteUserMutation,
   useUpdateUserMutation,
+  useAcceptEmailMutation,
+  useResetPasswordMutation,
   useAddAdminMutation,
   useDeleteAdminMutation,
   useGetAdminQuery,
