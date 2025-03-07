@@ -58,7 +58,11 @@ router.post("/login", async (req, res) => {
         message: "This user is inactive. Please contact the admin.",
       });
     }
-    if (user.role === "user" && user.user_Status !== "verified") {
+    if (
+      user.role === "user" &&
+      user.user_Status !== "verified" &&
+      user.password === ""
+    ) {
       return res.status(401).json({
         success: false,
         message: "See your mail box and complete the reset password process",

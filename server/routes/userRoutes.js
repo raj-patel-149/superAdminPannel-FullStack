@@ -41,6 +41,7 @@ router.post("/add-user", async (req, res) => {
       email,
       role: "user",
       signup: "trainer",
+      password: "",
       parent_Id: parent_Id,
       user_Status: "Email sent",
     });
@@ -125,14 +126,6 @@ router.post("/forgot-password", async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, salt);
     user.password = hashedPassword;
     user.user_Status = "verified";
-
-    // if (!user.password) {
-    //   newPassword = generateRandomPassword();
-    //   const salt = await bcrypt.genSalt(10);
-    //   const hashedPassword = await bcrypt.hash(newPassword, salt);
-    //   user.password = hashedPassword;
-    //   user.user_Status = "verified";
-    // }
 
     await user.save();
 
@@ -355,18 +348,24 @@ router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email, password, status } = req.body;
-
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { name, email, password, status },
-      { new: true }
-    );
-
-    if (!updatedUser) {
+    // Check if user exists
+    let user = await User.findById(id);
+    if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
+
+    // If password is provided, hash it before updating
+    let updatedFields = { name, email, status };
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      updatedFields.password = await bcrypt.hash(password, salt);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, updatedFields, {
+      new: true,
+    });
 
     res.json({
       success: true,

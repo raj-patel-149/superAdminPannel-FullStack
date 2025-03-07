@@ -136,7 +136,7 @@ const ProfilePage = () => {
               sx={{ marginTop: "10px" }}
               className="border-2 p-3 rounded-2xl mt-3 bg-gray-700 text-white font-[300]"
             >
-              <strong>Password:</strong> {user?.password}
+              <strong>Password:</strong> <b className=" text-[20px]">.......</b>
             </Typography>
           </Box>
         </CardContent>
