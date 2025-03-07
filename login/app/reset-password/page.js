@@ -1,7 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { TextField, Button, Typography, Card } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Card,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { useSearchParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -19,6 +26,7 @@ const ResetPasswordPage = () => {
   const [acceptEmail] = useAcceptEmailMutation();
   const router = useRouter();
   const [expireLink, setExpireLink] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -43,10 +51,11 @@ const ResetPasswordPage = () => {
     }
   }, [token]);
   useEffect(() => {
-    if (email) {
-      acceptEmail(email);
+    if (token) {
+      acceptEmail(token);
+      setOpenSnackbar(true);
     }
-  }, [email, acceptEmail]);
+  }, [token, acceptEmail]);
 
   const { data } = useGetUserByEmailQuery(`email/${email}`);
   const user = data?.user;
@@ -90,9 +99,27 @@ const ResetPasswordPage = () => {
       </div>
     );
   }
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Thank you for accepting the invitation!
+        </Alert>
+      </Snackbar>
+
       {expireLink ? (
         <h1 className="text-[30px] bg-[#fa9ba5] p-10 rounded-3xl font-[700]">
           Link was expired. Please request a new reset link.{" "}

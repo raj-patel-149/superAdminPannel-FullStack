@@ -82,8 +82,8 @@ export const apiSlice = createApi({
       invalidatesTags: ["User"],
     }),
     acceptEmail: builder.mutation({
-      query: (email) => ({
-        url: `user/accept-email/${email}`,
+      query: (token) => ({
+        url: `user/accept-email/${token}`,
         method: "PUT",
       }),
       invalidatesTags: ["User"],

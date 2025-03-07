@@ -2,9 +2,9 @@ const express = require("express");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-
 const router = express.Router();
 const SECRET_KEY = process.env.JWT_SECRET || "supersecretkey";
+const bcrypt = require("bcrypt");
 
 // Configure Nodemailer with Gmail SMTP
 const transporter = nodemailer.createTransport({
@@ -61,7 +61,7 @@ router.post("/add-user", async (req, res) => {
            <p>
              <p>Click below to reset your password:</p>
              <a href="${resetUrl}" 
-                style="padding: 10px 20px; background: #28A745; color: white; text-decoration: none;">Reset Password</a>
+                style="padding: 10px 20px; background: #28A745; color: white; text-decoration: none;">Accept Invitation</a>
         </p>
            <p>Best Regards,</p>
            <p>Team</p>
@@ -98,44 +98,54 @@ router.post("/forgot-password", async (req, res) => {
 
     // Find user by ID and update status
     const user = await User.findOne({ email });
-    if (user.role === "user") {
-      const generateRandomPassword = () => {
-        const chars =
-          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        let password = "";
-        for (let i = 0; i < 8; i++) {
-          password += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return password;
-      };
+    console.log(user);
 
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
+    const generateRandomPassword = () => {
+      const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let password = "";
+      for (let i = 0; i < 8; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
       }
-      if (user.user_Status === "Email sent") {
-        return res.status(404).json({
-          message:
-            "Please accept email then you can use forgot password fuctionality",
-        });
-      }
-      if (!user.password) {
-        user.password = generateRandomPassword();
-        user.user_Status = "verified";
-      }
+      return password;
+    };
 
-      await user.save();
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
+    if (user.user_Status === "Email sent") {
+      return res.status(404).json({
+        message:
+          "Please accept email then you can use forgot password fuctionality",
+      });
+    }
+
+    const newPassword = generateRandomPassword();
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    user.password = hashedPassword;
+    user.user_Status = "verified";
+
+    // if (!user.password) {
+    //   newPassword = generateRandomPassword();
+    //   const salt = await bcrypt.genSalt(10);
+    //   const hashedPassword = await bcrypt.hash(newPassword, salt);
+    //   user.password = hashedPassword;
+    //   user.user_Status = "verified";
+    // }
+
+    await user.save();
 
     // Define Email Content
     const mailOptions = {
       from: "rdpatel11124@gmail.com",
       to: email,
-      subject: "Welcome to Our Platform",
+      subject: "Forgot Password Request",
       html: `<p>Hello <b>${user.name}</b>,</p>
            <p>Login using this password.</p>
            <p><b>User Name:</b> ${user.name}</p>
            <p><b>Email:</b> ${email}</p>
-           <p><b>Your Password:</b> ${user.password}</p>
+           <p><b>Your Password:</b> ${newPassword}</p>
            <p>
              <p>Click below to login:</p>
              <a href="http://localhost:3000/login" 
@@ -170,9 +180,16 @@ router.post("/forgot-password", async (req, res) => {
 });
 
 // **Handle Email Acceptance**
-router.put("/accept-email/:email", async (req, res) => {
+router.put("/accept-email/:token", async (req, res) => {
   try {
-    const { email } = req.params;
+    const { token } = req.params;
+    let decoded;
+    try {
+      decoded = jwt.verify(token, SECRET_KEY);
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+    const email = decoded.email;
 
     // Find user by ID and update status
     const user = await User.findOne({ email });
@@ -180,7 +197,7 @@ router.put("/accept-email/:email", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const token = jwt.sign({ email }, SECRET_KEY, {
+    const acceptToken = jwt.sign({ email }, SECRET_KEY, {
       expiresIn: "2m",
     });
     if (user.user_Status !== "verified") {
@@ -218,8 +235,10 @@ router.post("/reset-password", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     // Update user password
-    user.password = password;
+    user.password = hashedPassword;
     user.user_Status = "verified";
     await user.save();
 

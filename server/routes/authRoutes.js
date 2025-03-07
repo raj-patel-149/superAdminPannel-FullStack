@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 const router = express.Router();
 const SECRET_KEY = process.env.JWT_SECRET || "supersecretkey";
@@ -40,12 +41,17 @@ router.post("/login", async (req, res) => {
         message: "User does not exist. SignUp Please",
       });
     }
+    // Password verification logic based on role
+    let isMatch = false;
+    isMatch = bcrypt.compare(password, user.password);
 
-    if (user.password !== password) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid password" });
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
     }
+
     if (user.status !== "active") {
       return res.status(401).json({
         success: false,
