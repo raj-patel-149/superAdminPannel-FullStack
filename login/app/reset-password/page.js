@@ -52,7 +52,8 @@ const ResetPasswordPage = () => {
   }, [token]);
 
   const { data } = useGetUserByEmailQuery(`email/${email}`);
-  const user = data?.user;
+  const user = data?.status;
+  console.log(user);
 
   useEffect(() => {
     if (token) {
@@ -60,7 +61,7 @@ const ResetPasswordPage = () => {
     }
   }, [token, acceptEmail]);
 
-  if (user?.user_Status === "Email sent") {
+  if (user === "Email sent") {
     setOpenSnackbar(true);
   }
 
@@ -84,7 +85,7 @@ const ResetPasswordPage = () => {
     }
   };
 
-  if (user?.user_Status === "verified") {
+  if (user === "verified") {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
         <h1 className="text-[30px] bg-[#b1f0cb] p-10 rounded-3xl font-[700]">
@@ -104,8 +105,8 @@ const ResetPasswordPage = () => {
     );
   }
   if (
-    user?.user_Status === "Email accepted" ||
-    (user?.user_Status === "Password not set" && expireLink)
+    user === "Email accepted" ||
+    (user === "Password not set" && expireLink)
   ) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">

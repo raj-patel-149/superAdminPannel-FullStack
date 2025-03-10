@@ -50,7 +50,7 @@ const ProfilePage = () => {
   const handleEditClick = () => {
     setValue("name", user?.name);
     setValue("email", user?.email);
-    setValue("password", user?.password);
+    setValue("password", "");
     setOpen(true);
   };
 

@@ -320,7 +320,9 @@ router.get("/email/:email", async (req, res) => {
         .json({ success: false, message: "user not found" });
     }
 
-    res.json({ success: true, user });
+    const status = user.user_Status;
+
+    res.json({ success: true, status });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

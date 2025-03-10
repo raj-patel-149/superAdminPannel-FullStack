@@ -41,6 +41,16 @@ router.post("/login", async (req, res) => {
         message: "User does not exist. SignUp Please",
       });
     }
+    if (
+      user.role === "user" &&
+      user.user_Status !== "verified" &&
+      user.password === ""
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "See your mail box and complete the reset password process",
+      });
+    }
     // Password verification
     const isMatch = await bcrypt.compare(password, user.password); // ✅ Await bcrypt.compare
 
@@ -55,16 +65,6 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({
         success: false,
         message: "This user is inactive. Please contact the admin.",
-      });
-    }
-    if (
-      user.role === "user" &&
-      user.user_Status !== "verified" &&
-      user.password === ""
-    ) {
-      return res.status(401).json({
-        success: false,
-        message: "See your mail box and complete the reset password process",
       });
     }
 
