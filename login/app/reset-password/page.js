@@ -52,18 +52,19 @@ const ResetPasswordPage = () => {
   }, [token]);
 
   const { data } = useGetUserByEmailQuery(`email/${email}`);
-  const user = data?.status;
-  console.log(user);
+  const user = data?.user;
+  console.log(user?.user_Status);
 
   useEffect(() => {
     if (token) {
       acceptEmail(token);
     }
   }, [token, acceptEmail]);
-
-  if (user === "Email sent") {
-    setOpenSnackbar(true);
-  }
+  useEffect(() => {
+    if (user?.user_Status === "Email sent") {
+      setOpenSnackbar(true);
+    }
+  }, [user]); // Runs only when `user` changes
 
   const [resetPassword, { isLoading, isError, isSuccess }] =
     useResetPasswordMutation();
@@ -85,7 +86,7 @@ const ResetPasswordPage = () => {
     }
   };
 
-  if (user === "verified") {
+  if (user?.user_Status === "verified") {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
         <h1 className="text-[30px] bg-[#b1f0cb] p-10 rounded-3xl font-[700]">
@@ -104,31 +105,31 @@ const ResetPasswordPage = () => {
       </div>
     );
   }
-  if (
-    user === "Email accepted" ||
-    (user === "Password not set" && expireLink)
-  ) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-        <h1 className="text-[30px] bg-[#b1f0cb] p-10 rounded-3xl font-[700] text-center">
-          <p>
-            Thank you for accept our invitation . You can click on forgot
-            password button to gate your password.
-          </p>
-          <div className="mt-4 flex justify-center space-x-4">
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ width: "200px", backgroundColor: "#5a80f2" }}
-              onClick={() => router.push("/forgot-password")}
-            >
-              Forgot Password
-            </Button>
-          </div>
-        </h1>
-      </div>
-    );
-  }
+  // if (
+  //   user?.user_Status === "Email accepted" ||
+  //   (user?.user_Status === "Password not set" && expireLink)
+  // ) {
+  //   return (
+  //     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+  //       <h1 className="text-[30px] bg-[#b1f0cb] p-10 rounded-3xl font-[700] text-center">
+  //         <p>
+  //           Thank you for accept our invitation . You can click on forgot
+  //           password button to gate your password.
+  //         </p>
+  //         <div className="mt-4 flex justify-center space-x-4">
+  //           <Button
+  //             variant="contained"
+  //             color="primary"
+  //             sx={{ width: "200px", backgroundColor: "#5a80f2" }}
+  //             onClick={() => router.push("/forgot-password")}
+  //           >
+  //             Forgot Password
+  //           </Button>
+  //         </div>
+  //       </h1>
+  //     </div>
+  //   );
+  // }
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };

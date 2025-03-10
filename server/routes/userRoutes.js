@@ -33,7 +33,7 @@ router.post("/add-user", async (req, res) => {
     }
 
     const resetToken = jwt.sign({ email: email }, SECRET_KEY, {
-      expiresIn: "1m",
+      expiresIn: "10m",
     });
 
     const newUser = new User({
@@ -322,7 +322,7 @@ router.get("/email/:email", async (req, res) => {
 
     const status = user.user_Status;
 
-    res.json({ success: true, status });
+    res.json({ success: true, user });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
