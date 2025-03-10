@@ -30,9 +30,9 @@ export function middleware(req) {
   if (!token && req.nextUrl.pathname.startsWith(userPath)) {
     return NextResponse.redirect(new URL(mainPath, req.url));
   }
-  if (!token && req.nextUrl.pathname.startsWith(superPath)) {
-    return NextResponse.redirect(new URL(mainPath, req.url));
-  }
+  // if (!token && req.nextUrl.pathname.startsWith(superPath)) {
+  //   return NextResponse.redirect(new URL(mainPath, req.url));
+  // }
   if (!token && req.nextUrl.pathname.startsWith(trainerPath)) {
     return NextResponse.redirect(new URL(mainPath, req.url));
   }
