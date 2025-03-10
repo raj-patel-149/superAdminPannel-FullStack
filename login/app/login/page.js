@@ -23,7 +23,6 @@ export default function Login() {
         if (res.role === "superadmin") {
           setSnackbarOpen(true);
           setTimeout(() => {
-             console.log("Redirecting to: /super-admin"); 
             router.push(`/super-admin`);
           }, 700);
         } else if (res.role === "admin") {
