@@ -47,7 +47,7 @@ router.post("/add-user", async (req, res) => {
     });
     await newUser.save();
 
-    const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
+    const resetUrl = `https://super-admin-pannel-full-stack.vercel.app/reset-password?token=${resetToken}`;
     // Define Email Content
     const mailOptions = {
       from: "rdpatel11124@gmail.com",
@@ -141,7 +141,7 @@ router.post("/forgot-password", async (req, res) => {
            <p><b>Your Password:</b> ${newPassword}</p>
            <p>
              <p>Click below to login:</p>
-             <a href="http://localhost:3000/login" 
+             <a href="https://super-admin-pannel-full-stack.vercel.app/login" 
                 style="padding: 10px 20px; background: #2e99e6; color: white; text-decoration: none;">Login Now</a>
         </p>
            <p>Best Regards,</p>
