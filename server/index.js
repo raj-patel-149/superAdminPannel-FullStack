@@ -31,7 +31,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/trainer", trainerRoutes);
 
 // Start Server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
