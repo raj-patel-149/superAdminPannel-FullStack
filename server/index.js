@@ -13,7 +13,12 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(
+  cors({
+    origin: "https://super-admin-pannel-full-stack.vercel.app/",
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
 // Connect to MongoDB
