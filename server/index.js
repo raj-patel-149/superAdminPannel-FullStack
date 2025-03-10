@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://super-admin-pannel-full-stack.vercel.app/",
+    origin: "https://super-admin-pannel-full-stack.vercel.app",
     credentials: true,
   })
 );
